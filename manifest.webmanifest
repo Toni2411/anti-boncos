@@ -1,0 +1,14 @@
+{
+  "name": "Anti Boncos: Kalkulator Harga Jual",
+  "short_name": "Anti Boncos",
+  "description": "Hitung harga jual aman setelah potongan marketplace. Gratis, tanpa login.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ebeae6",
+  "theme_color": "#ebeae6",
+  "lang": "id",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

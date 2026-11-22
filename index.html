@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ebeae6">
+<title>Anti Boncos</title>
+<meta name="description" content="Kalkulator harga jual gratis untuk seller Shopee, TikTok Shop, dan jualan langsung. Rumus dan tarif bersumber resmi.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://api.fontshare.com" crossorigin>
+<link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #f5f6f8; --surface: #fff; --ink: #111827; --ink-2: #374151; --mute: #6b7280; --line: #e5e7eb; --soft: #f3f4f6;
+    --accent: #0f8a4c; --accent-ink: #fff; --accent-soft: #e8f5ee;
+    --bad: #dc2626; --bad-soft: #fef2f2; --warn: #b45309; --warn-soft: #fffbeb;
+    --r: 14px;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  .app { max-width: 480px; margin: 0 auto; padding: 0 16px calc(84px + env(safe-area-inset-bottom)); }
+
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0 10px; }
+  header h1 { font-size: 26px; font-weight: 750; letter-spacing: -.02em; margin: 0; }
+  .brand { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+
+  .screen { display: none; }
+  .screen.on { display: block; }
+
+  .label { font-size: 13px; font-weight: 600; color: var(--ink-2); margin: 18px 0 8px; display: flex; justify-content: space-between; align-items: baseline; }
+  .label a, .link { color: var(--accent); font-weight: 600; text-decoration: none; background: none; border: 0; padding: 0; font-size: 13px; }
+
+  /* store picker */
+  .stores { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 -16px; padding: 0 16px; }
+  .stores::-webkit-scrollbar { display: none; }
+  .stores button { flex: 0 0 auto; border: 1px solid var(--line); background: var(--surface); padding: 8px 14px; border-radius: 999px; font-weight: 600; font-size: 14px; color: var(--ink-2); }
+  .stores button.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .feeline { font-size: 13px; color: var(--mute); margin-top: 8px; }
+
+  /* form card */
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+  .field { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .field:last-child { border-bottom: 0; }
+  .field .name { flex: 1; min-width: 0; }
+  .field .name b { display: block; font-size: 15px; font-weight: 600; }
+  .field .name small { display: block; font-size: 12.5px; color: var(--mute); }
+  .money { display: flex; align-items: center; background: var(--soft); border-radius: 10px; padding: 0 10px; width: 150px; border: 1.5px solid transparent; }
+  .money:focus-within { border-color: var(--accent); background: #fff; }
+  .money span { color: var(--mute); font-size: 14px; }
+  .money input { border: 0; background: transparent; outline: 0; width: 100%; min-width: 0; padding: 10px 4px; text-align: right; font-size: 16px; font-weight: 600; }
+  .unit { display: flex; background: var(--soft); border-radius: 8px; padding: 2px; margin-left: 4px; }
+  .unit button { border: 0; background: transparent; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--mute); }
+  .unit button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+
+  .switch { position: relative; width: 44px; height: 26px; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .switch i { position: absolute; inset: 0; background: #d1d5db; border-radius: 99px; transition: .15s; pointer-events: none; }
+  .switch i::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,.2); transition: .15s; }
+  .switch input:checked + i { background: var(--accent); }
+  .switch input:checked + i::after { transform: translateX(18px); }
+  .switch input:focus-visible + i { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* result */
+  .result { margin-top: 16px; padding: 18px; }
+  .result .k { font-size: 13px; color: var(--mute); font-weight: 600; }
+  .answer { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1.1; margin: 4px 0 6px; }
+  .explain { font-size: 14px; color: var(--ink-2); }
+  .rows { margin-top: 14px; border-top: 1px solid var(--line); }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .row:last-child { border-bottom: 0; }
+  .row span { color: var(--ink-2); }
+  .row b { font-weight: 650; white-space: nowrap; }
+  .row.total b { font-size: 16px; }
+  .pos { color: var(--accent); }
+  .neg { color: var(--bad); }
+  details { margin-top: 4px; }
+  summary { list-style: none; cursor: pointer; color: var(--accent); font-weight: 600; font-size: 14px; padding: 10px 0 2px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: ' ›'; display: inline-block; transition: transform .15s; }
+  details[open] summary::after { transform: rotate(90deg); }
+  .bar { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--soft); margin: 10px 0 6px; }
+  .bar i { display: block; height: 100%; }
+  .notice { margin-top: 12px; padding: 12px 14px; border-radius: 12px; font-size: 13.5px; line-height: 1.5; background: var(--warn-soft); color: #78350f; }
+  .notice.bad { background: var(--bad-soft); color: #7f1d1d; }
+  .inline-num { width: 52px; border: 1px solid var(--line); border-radius: 6px; padding: 2px 6px; text-align: right; font-size: 13px; background: var(--soft); }
+  .copy { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 3px 9px; font-size: 12px; font-weight: 600; margin-left: 8px; }
+
+  .other { margin-top: 16px; }
+  .other h3, .section-title { font-size: 15px; font-weight: 700; margin: 22px 0 8px; }
+  .store-row { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; border: 0; border-bottom: 1px solid var(--line); background: transparent; text-align: left; }
+  .store-row:last-child { border-bottom: 0; }
+  .store-row .s { flex: 1; }
+  .store-row .s b { display: block; font-weight: 600; }
+  .store-row .s small { color: var(--mute); font-size: 12.5px; }
+  .store-row .p { text-align: right; font-weight: 650; }
+  .store-row .p small { display: block; font-weight: 500; font-size: 12px; color: var(--mute); }
+  .store-row.cur { background: var(--accent-soft); }
+
+  /* products */
+  .summary { display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; padding: 14px 6px; }
+  .summary div b { display: block; font-size: 22px; font-weight: 750; }
+  .summary div span { font-size: 12.5px; color: var(--mute); }
+  .prod { padding: 14px; border-bottom: 1px solid var(--line); }
+  .prod:last-child { border-bottom: 0; }
+  .prod-top { display: flex; align-items: center; gap: 8px; }
+  .prod-top input { flex: 1; border: 0; outline: 0; font-weight: 650; font-size: 15px; background: transparent; padding: 2px 0; min-width: 0; }
+  .prod-top button { border: 0; background: none; color: var(--mute); font-size: 13px; padding: 4px; }
+  .prod-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .prod-grid label { font-size: 12px; color: var(--mute); display: block; margin-bottom: 3px; }
+  .prod-grid .money { width: 100%; }
+  .prod-res { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 10px; font-size: 14px; }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  .fix { margin-top: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 13.5px; background: var(--soft); border-radius: 10px; padding: 8px 10px; }
+  .fix button { border: 0; background: var(--ink); color: #fff; border-radius: 8px; padding: 5px 10px; font-size: 13px; font-weight: 600; }
+
+  .btn { display: block; width: 100%; border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 650; padding: 13px; border-radius: 12px; font-size: 15px; }
+  .btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--line); }
+  .btn-row { display: flex; gap: 8px; margin-top: 10px; }
+  .btn-row > * { flex: 1; }
+  .file-btn { display: block; text-align: center; cursor: pointer; }
+
+  /* settings */
+  .store-card { margin-bottom: 12px; }
+  .store-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .store-head input { flex: 1; border: 0; outline: 0; font-weight: 700; font-size: 16px; background: transparent; min-width: 0; }
+  .store-head small { color: var(--mute); font-size: 12.5px; white-space: nowrap; }
+  .fee { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .fee:last-of-type { border-bottom: 0; }
+  .fee .fn { flex: 1; min-width: 0; }
+  .fee .fn input { border: 0; outline: 0; width: 100%; font-size: 14px; font-weight: 600; background: transparent; padding: 0; }
+  .fee .fn small { color: var(--mute); font-size: 12px; }
+  .fee .fn small input { display: inline; width: 76px; font-weight: 500; font-size: 12px; border-bottom: 1px dashed var(--line); }
+  .fee .money { width: 104px; }
+  .fee .del { border: 0; background: none; color: var(--mute); font-size: 18px; padding: 0 2px; }
+  .store-foot { display: flex; gap: 14px; padding: 10px 14px; border-top: 1px solid var(--line); }
+  .store-src { padding: 8px 14px; font-size: 12px; color: var(--mute); border-top: 1px solid var(--line); background: var(--soft); }
+  .store-src a, .ref a { color: var(--accent); }
+  .fnote { display: block; color: var(--mute); font-size: 11.5px; margin-top: 2px; }
+  .doc h3 { font-size: 15px; margin: 22px 0 6px; }
+  .doc p, .doc li { font-size: 14px; line-height: 1.55; color: var(--ink-2); }
+  .doc ul, .doc ol { padding-left: 18px; margin: 6px 0; }
+  .formula { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: ui-monospace, Consolas, monospace; font-size: 13px; line-height: 1.6; margin: 8px 0; overflow-x: auto; white-space: pre; }
+  .ref { font-size: 13px; line-height: 1.5; margin-bottom: 8px; }
+  .ref small { color: var(--mute); }
+  .credit { margin-top: 18px; padding: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: 13.5px; text-align: left; }
+  .credit a { color: var(--accent); font-weight: 600; text-decoration: none; }
+
+  /* ===== Visual layer: editorial style (warm stone, big type, ink result card, floating pills) ===== */
+  :root {
+    --bg: #ebeae6; --surface: #fff; --ink: #141414; --ink-2: #3a3a38; --mute: #8a8984; --line: #e7e5e0; --soft: #f4f3f0;
+    --accent: #ff5a1f; --accent-ink: #fff; --accent-soft: #fff1ea; --good: #12805c; --r: 22px;
+  }
+  body {
+    font-family: 'Satoshi', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; letter-spacing: -.005em;
+    background-color: var(--bg);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+  }
+  header { padding: 26px 0 6px; }
+  header h1 { font-size: 30px; font-weight: 900; letter-spacing: -.035em; line-height: 1.02; }
+  .brand { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--ink-2); letter-spacing: 0; background: var(--surface); border: 1px solid var(--line); padding: 5px 11px; border-radius: 999px; margin-bottom: 12px; }
+  .brand::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(255,90,31,.15); }
+  .hero h1 { font-size: 40px; }
+  .hero h1 span { color: #9b9a95; display: block; }
+  .hero p { color: var(--ink-2); font-size: 15px; margin: 10px 0 0; max-width: 34ch; }
+
+  .label { font-size: 13px; font-weight: 700; color: var(--ink); margin: 24px 0 10px; }
+  .step { display: inline-flex; align-items: center; gap: 8px; }
+  .step i { font-style: normal; width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); display: inline-grid; place-items: center; font-size: 11px; font-weight: 700; }
+  .label a, .link { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(20,20,20,.25); }
+
+  .stores { background: var(--surface); border-radius: 999px; padding: 4px; margin: 0; display: inline-flex; max-width: 100%; box-shadow: 0 1px 0 rgba(0,0,0,.03); }
+  .stores button { border: 0; background: transparent; padding: 8px 14px; color: var(--mute); font-weight: 700; }
+  .stores button.on { background: var(--ink); color: #fff; box-shadow: 0 6px 14px -8px var(--accent); }
+  .feeline { margin-top: 10px; }
+
+  .card { border: 0; border-radius: var(--r); box-shadow: 0 1px 0 rgba(0,0,0,.03), 0 10px 30px -18px rgba(20,20,20,.25); }
+  .field { padding: 14px 16px; border-bottom-color: var(--line); }
+  .field .name b { font-weight: 700; }
+  .money { background: var(--soft); border-radius: 12px; }
+  .money:focus-within { border-color: var(--ink); }
+  .money input { font-weight: 700; }
+  .unit button.on { background: var(--ink); color: #fff; box-shadow: none; }
+  .switch input:checked + i { background: var(--ink); }
+
+  /* the answer: ink card */
+  #hResult { background: var(--ink); color: #f5f4f0; padding: 22px; }
+  #hResult .k { color: #a9a8a3; letter-spacing: .08em; text-transform: uppercase; font-size: 11.5px; }
+  #hResult .answer { color: #fff; font-size: 48px; font-weight: 900; letter-spacing: -.04em; }
+  #hResult .explain { color: #bdbcb7; }
+  #hResult .rows { border-top-color: rgba(255,255,255,.12); }
+  #hResult .row { border-bottom-color: rgba(255,255,255,.08); }
+  #hResult .row span { color: #c9c8c3; }
+  #hResult .pos { color: #7be3ad; }
+  #hResult summary { color: #fff; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.3); }
+  #hResult .bar { background: rgba(255,255,255,.1); }
+  #hResult .notice { background: rgba(255,90,31,.14); color: #ffc3a8; }
+  #hResult .notice.bad { background: rgba(220,38,38,.18); color: #ffb4b4; }
+
+  .other h3, .section-title { font-size: 13px; font-weight: 700; letter-spacing: .02em; color: var(--ink); }
+  .store-row.cur { background: var(--soft); }
+  .pos { color: var(--good); }
+
+  .btn { background: var(--ink); border-radius: 999px; font-weight: 700; box-shadow: 0 10px 20px -12px var(--accent); }
+  .btn.secondary { background: var(--surface); border: 1px solid var(--line); box-shadow: none; }
+  .fix button { background: var(--ink); border-radius: 999px; }
+  .summary div b { font-weight: 900; font-size: 26px; }
+
+  nav.tabs { left: 12px; right: 12px; margin: 0 auto; max-width: 440px; bottom: calc(12px + env(safe-area-inset-bottom)); border: 0; border-radius: 999px; padding: 5px; background: rgba(255,255,255,.92); box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 14px 34px -14px rgba(20,20,20,.35); }
+  nav.tabs .in { gap: 4px; }
+  nav.tabs button { flex-direction: row; gap: 7px; justify-content: center; padding: 10px 6px; border-radius: 999px; font-size: 13px; font-weight: 700; color: var(--mute); }
+  nav.tabs button svg { width: 18px; height: 18px; }
+  nav.tabs button.on { background: var(--ink); color: #fff !important; }
+  .app { padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
+
+  .sheet { background: var(--bg); border-radius: 28px 28px 0 0; }
+  .formula { white-space: pre-line; font-family: inherit; font-size: 14px; font-weight: 700; line-height: 1.75; color: var(--ink); overflow-x: visible; border: 0; box-shadow: 0 1px 0 rgba(0,0,0,.03); padding: 12px 14px; }
+  .doc h3 { font-weight: 900; letter-spacing: -.01em; }
+  .credit { border: 0; border-radius: var(--r); box-shadow: 0 1px 0 rgba(0,0,0,.03); }
+  .credit a, .store-src a, .ref a, .cite a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,90,31,.6); }
+  .toast { border-radius: 999px; }
+  .muted-note { font-size: 13px; color: var(--mute); margin: 6px 0 14px; line-height: 1.5; }
+
+  /* bottom nav */
+  nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,.96); backdrop-filter: blur(10px); border-top: 1px solid var(--line); padding-bottom: env(safe-area-inset-bottom); z-index: 10; }
+  nav.tabs .in { max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); }
+  nav.tabs button { border: 0; background: none; padding: 9px 0 10px; display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 12px; font-weight: 600; color: var(--mute); }
+  nav.tabs button svg { width: 22px; height: 22px; }
+  nav.tabs button.on { color: var(--accent); }
+
+  /* sheet */
+  .sheet-bg { position: fixed; inset: 0; background: rgba(17,24,39,.4); z-index: 20; display: none; }
+  .sheet { position: fixed; left: 0; right: 0; bottom: 0; max-height: 92vh; overflow-y: auto; background: var(--bg); border-radius: 18px 18px 0 0; z-index: 21; transform: translateY(100%); transition: transform .22s ease; padding-bottom: env(safe-area-inset-bottom); }
+  .sheet.open { transform: none; }
+  .sheet .in { max-width: 480px; margin: 0 auto; padding: 10px 16px 24px; }
+  .sheet .grab { width: 40px; height: 4px; border-radius: 4px; background: #d1d5db; margin: 0 auto 10px; }
+  .sheet-head { display: flex; justify-content: space-between; align-items: center; }
+  .sheet-head h2 { font-size: 20px; margin: 0; }
+  .x { border: 0; background: var(--soft); width: 32px; height: 32px; border-radius: 50%; font-size: 16px; }
+  .ing { padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  .ing:last-child { border-bottom: 0; }
+  .ing-top { display: flex; gap: 8px; align-items: center; }
+  .ing-top input { flex: 1; border: 0; outline: 0; font-weight: 600; background: transparent; min-width: 0; }
+  .ing-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .ing-grid label { font-size: 11.5px; color: var(--mute); display: block; margin-bottom: 3px; }
+  .ing-grid .money { width: 100%; padding: 0 8px; }
+  .ing-grid .money input { padding: 8px 2px; font-size: 15px; }
+  .ing-cost { font-size: 13px; color: var(--mute); }
+
+  .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(10px); background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 30; pointer-events: none; white-space: nowrap; }
+  .toast.show { opacity: 1; transform: translateX(-50%); }
+  footer { text-align: center; font-size: 12px; color: var(--mute); margin-top: 28px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ================= HARGA JUAL ================= -->
+  <section class="screen on" id="s-harga">
+    <header class="hero"><div><div class="brand">Anti Boncos · gratis, tanpa login</div><h1>Harga jual yang <span>nggak bikin boncos.</span></h1><p>Isi modal dan untung yang kamu mau. Potongan marketplace dihitung pakai tarif resmi.</p></div></header>
+
+    <div class="label"><span class="step"><i>1</i>Jual di</span></div>
+    <div class="stores" data-stores="harga"></div>
+    <div class="feeline" id="hFeeLine"></div>
+
+    <div class="label"><span class="step"><i>2</i>Biaya &amp; target untung</span> <button class="link" id="openRecipe">Hitung modal dari resep</button></div>
+    <div class="card">
+      <div class="field"><div class="name"><b>Modal per barang</b><small>harga beli / biaya produksi</small></div><div class="money"><span>Rp</span><input id="hHpp" inputmode="numeric" value="50.000"></div></div>
+      <div class="field"><div class="name"><b>Kemasan & lain-lain</b><small>per pesanan</small></div><div class="money"><span>Rp</span><input id="hPack" inputmode="numeric" value="2.000"></div></div>
+      <div class="field"><div class="name"><b>Untung yang diinginkan</b><small id="hTargetHint">bersih, per barang</small></div>
+        <div class="money"><span id="hTargetPre">Rp</span><input id="hTarget" inputmode="numeric" value="15.000"></div>
+        <div class="unit" id="hUnit"><button data-v="rp" class="on">Rp</button><button data-v="pct">%</button></div></div>
+      <div class="field"><div class="name"><b>Pakai voucher toko</b><small>diskon yang kamu tanggung</small></div><label class="switch"><input type="checkbox" id="hDiscOn"><i></i></label></div>
+      <div class="field" id="hDiscRow" hidden><div class="name"><b>Besar voucher</b></div><div class="money"><input id="hDisc" inputmode="decimal" value="5"><span>%</span></div></div>
+    </div>
+
+    <div class="card result" id="hResult">
+      <div class="k">Pasang harga</div>
+      <div class="answer" id="hNice">-</div>
+      <div class="explain" id="hExplain"></div>
+      <div class="rows">
+        <div class="row"><span>Uang masuk ke kamu</span><b id="hPayout">-</b></div>
+        <div class="row total"><span>Untung bersih</span><b class="pos" id="hProfit">-</b></div>
+      </div>
+      <details id="hDetails"><summary>Lihat rincian potongan</summary><div class="bar" id="hBar"></div><div class="rows" id="hBreak"></div></details>
+      <div class="notice" id="hNotice" hidden></div>
+    </div>
+
+    <div class="other">
+      <h3>Harga yang perlu dipasang di toko lain</h3>
+      <div class="card" id="hOther"></div>
+    </div>
+    <footer>
+      <button class="link" data-open-doc>Dasar hitungan &amp; sumber</button> · data tersimpan di perangkat ini saja
+      <div class="credit">Dibuat gratis oleh <b>Muhammad Fathoni</b>, engineer IoT, AI &amp; Web.<br>
+        Butuh website, dashboard, atau tools untuk usahamu? <a href="https://lynk.id/toniii24" target="_blank" rel="noopener">Lihat karya &amp; konsultasi gratis</a> · <a href="https://toni2411.github.io" target="_blank" rel="noopener">Portofolio</a></div>
+    </footer>
+  </section>
+
+  <!-- ================= CEK PRODUK ================= -->
+  <section class="screen" id="s-produk">
+    <header><div><div class="brand">Anti Boncos</div><h1>Cek produk</h1></div></header>
+    <p class="muted-note">Masukkan modal dan harga yang sudah kamu pasang. Produk yang untungnya tipis atau rugi langsung kelihatan.</p>
+    <div class="stores" data-stores="produk"></div>
+    <div class="label">Untung minimal yang dianggap aman <span><input class="inline-num" id="pMin" inputmode="numeric" value="10"> %</span></div>
+    <div class="card summary" id="pSummary"></div>
+    <div class="section-title">Produk</div>
+    <div class="card" id="pList"></div>
+    <div class="btn-row"><button class="btn" id="pAdd">Tambah produk</button></div>
+    <div class="btn-row">
+      <label class="btn secondary file-btn">Impor CSV<input type="file" id="pImport" accept=".csv,text/csv" hidden></label>
+      <button class="btn secondary" id="pExport">Ekspor CSV</button>
+    </div>
+    <p class="muted-note" style="margin-top:12px">Format CSV: nama, modal, harga (satu produk per baris).</p>
+  </section>
+
+  <!-- ================= TARIF ================= -->
+  <section class="screen" id="s-tarif">
+    <header><div><div class="brand">Anti Boncos</div><h1>Tarif toko</h1></div></header>
+    <p class="muted-note">Angka awal diambil dari sumber resmi (lihat sumber di tiap toko) dan memakai tarif tertinggi supaya harga yang disarankan aman. Samakan dengan kategori produkmu di Seller Centre, lalu matikan program yang tidak kamu ikuti. <button class="link" data-open-doc>Dasar hitungan &amp; sumber</button></p>
+    <div id="tList"></div>
+    <div class="btn-row"><button class="btn secondary" id="tAddStore">Tambah toko</button><button class="btn secondary" id="tReset">Pakai contoh awal</button></div>
+  </section>
+</div>
+
+<nav class="tabs" aria-label="Menu">
+  <div class="in">
+    <button class="on" data-go="harga"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12V4h8l10 10-8 8L3 12z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>Harga Jual</button>
+    <button data-go="produk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6h12M9 12h12M9 18h12"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></svg>Cek Produk</button>
+    <button data-go="tarif"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Tarif Toko</button>
+  </div>
+</nav>
+
+<!-- ================= RESEP (sheet) ================= -->
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="in">
+    <div class="grab"></div>
+    <div class="sheet-head"><h2 id="sheetTitle">Modal dari resep</h2><button class="x" id="sheetClose" aria-label="Tutup">✕</button></div>
+    <p class="muted-note">Isi bahan sesuai harga beli dan takaran yang dipakai. Cocok untuk jualan makanan dan minuman.</p>
+    <div class="card">
+      <div class="field"><div class="name"><b>Resep jadi berapa</b><small>porsi / pcs</small></div><div class="money"><input id="rYield" inputmode="numeric" value="20"><span>pcs</span></div></div>
+    </div>
+    <div class="section-title">Bahan</div>
+    <div class="card" id="rList"></div>
+    <div class="btn-row"><button class="btn secondary" id="rAdd">Tambah bahan</button></div>
+    <div class="card" style="margin-top:12px">
+      <div class="field"><div class="name"><b>Kemasan</b><small>per pcs</small></div><div class="money"><span>Rp</span><input id="rPack" inputmode="numeric" value="1.500"></div></div>
+      <div class="field"><div class="name"><b>Gas, listrik, tenaga</b><small>persen dari biaya bahan</small></div><div class="money"><input id="rOver" inputmode="numeric" value="15"><span>%</span></div></div>
+    </div>
+    <div class="card result">
+      <div class="k">Modal per pcs</div>
+      <div class="answer" id="rHpp">-</div>
+      <div class="explain" id="rExplain"></div>
+    </div>
+    <div class="btn-row"><button class="btn" id="rUse">Pakai modal ini</button></div>
+  </div>
+</div>
+
+<!-- ================= DASAR HITUNGAN (sheet) ================= -->
+<div class="sheet-bg" id="docBg"></div>
+<div class="sheet" id="doc" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+  <div class="in doc">
+    <div class="grab"></div>
+    <div class="sheet-head"><h2 id="docTitle">Dasar hitungan</h2><button class="x" id="docClose" aria-label="Tutup">✕</button></div>
+    <p>Semua angka di aplikasi ini dihitung dengan rumus di bawah. Tarif bawaan diambil dari sumber resmi yang dicantumkan, dicek <b id="docChecked"></b>.</p>
+
+    <h3>1. Potongan marketplace</h3>
+    <div class="formula">Harga dasar = Harga di toko − voucher/diskon yang kamu tanggung
+Potongan % = Harga dasar × tarif (tidak lebih dari batas maksimal, jika ada)
+Potongan tetap = biaya per pesanan, misalnya Rp1.250 di Shopee</div>
+    <p>Ini mengikuti rumus resmi Shopee: Biaya Administrasi = (Harga Asli Produk − Diskon Produk dan/atau Voucher Diskon Ditanggung Penjual) × persentase kategori. Biaya tidak dikenakan ke ongkir dan sudah termasuk PPN <span class="cite" data-src="shopeeAdmin"></span>.</p>
+
+    <h3>2. Uang masuk dan untung bersih</h3>
+    <div class="formula">Uang masuk = Harga dasar − semua potongan
+Untung bersih = Uang masuk − (modal + kemasan &amp; lain-lain)
+Margin = Untung bersih ÷ Harga dasar</div>
+    <p>Margin dihitung sebagai persentase dari harga jual, bukan dari modal (itu namanya markup) <span class="cite" data-src="margin"></span>.</p>
+
+    <h3>3. Harga minimum</h3>
+    <p>Kalkulator mencari harga terendah yang membuat untung bersih sama dengan targetmu. Kalau tidak ada batas maksimal atau ambang tarif, rumusnya:</p>
+    <div class="formula">Target Rupiah:
+Harga = (Modal + Kemasan + Biaya tetap + Untung) ÷ ((1 − voucher) × (1 − total tarif))
+
+Target persen:
+Harga = (Modal + Kemasan + Biaya tetap) ÷ ((1 − voucher) × (1 − total tarif − target margin))</div>
+    <p><b>Contoh:</b> modal Rp45.000, kemasan Rp2.000, ingin untung Rp15.000, biaya administrasi 10% dan biaya proses Rp1.250:<br>(45.000 + 2.000 + 1.250 + 15.000) ÷ 0,90 = <b>Rp70.278</b>. Lalu dibulatkan menjadi Rp70.900.</p>
+    <p>Kalau ada potongan dengan batas maksimal (misalnya Gratis Ongkir XTRA maks Rp40.000) atau tarif bertingkat (QRIS), rumus di atas tidak berlaku lurus. Harga dicari secara numerik dengan metode bagi dua (bisection) sampai selisihnya di bawah Rp1, lalu dicek di setiap tingkat tarif.</p>
+
+    <h3>4. Pembulatan harga</h3>
+    <p>Harga minimum dinaikkan ke akhiran 900 (atau kelipatan Rp500 untuk harga di bawah Rp10.000), dan tidak pernah turun di bawah harga minimum. Alasannya, riset menunjukkan pembeli menilai harga dari angka paling kiri, sehingga Rp69.900 terasa lebih murah dari Rp70.000 (left-digit effect) <span class="cite" data-src="leftdigit"></span>. Efek ini paling terasa kalau angka paling kirinya berubah.</p>
+
+    <h3>5. Status di Cek Produk</h3>
+    <ul>
+      <li><b>Rugi</b>: untung bersih di bawah Rp0.</li>
+      <li><b>Untung tipis</b>: margin di bawah batas yang kamu tentukan. Angka bawaan 10% adalah pilihan aplikasi, bukan standar baku, jadi sesuaikan dengan usahamu.</li>
+      <li><b>Saran harga</b>: harga minimum untuk mencapai batas itu, lalu dibulatkan seperti poin 4.</li>
+    </ul>
+
+    <h3>6. Modal dari resep</h3>
+    <div class="formula">Biaya bahan = harga beli ÷ isi kemasan × jumlah dipakai
+Modal per pcs = (total biaya bahan + biaya lain) ÷ jumlah hasil + kemasan per pcs</div>
+    <p>HPP mencakup semua biaya untuk memproduksi barang yang dijual <span class="cite" data-src="cogs"></span>. "Biaya lain" (gas, listrik, tenaga) dimasukkan sebagai persen dari biaya bahan. Itu penyederhanaan, jadi isi sesuai catatan pengeluaranmu.</p>
+
+    <h3>7. QRIS untuk jualan langsung</h3>
+    <p>Untuk merchant usaha mikro, MDR QRIS 0% untuk transaksi sampai Rp500.000 dan 0,3% untuk transaksi di atasnya. Usaha kecil, menengah, dan besar: 0% sampai Rp100.000, lalu 0,7%. Berlaku sejak 1 Oktober 2026 <span class="cite" data-src="qris"></span>. Ubah di Tarif Toko kalau usahamu bukan kategori mikro.</p>
+
+    <h3>8. Kenapa tidak ada fitur "harga coret"?</h3>
+    <p>Menaikkan harga dulu supaya terlihat diskon termasuk menawarkan barang "seolah-olah" mendapat potongan harga, yang dilarang dan diancam pidana <span class="cite" data-src="uupk"></span>. Pakai harga coret hanya kalau itu memang harga normalmu sebelumnya.</p>
+
+    <h3>9. Yang belum dihitung</h3>
+    <ul>
+      <li>Ongkir yang kamu tanggung sendiri (masukkan ke "Kemasan &amp; lain-lain").</li>
+      <li>Biaya iklan, retur, program lain (misalnya Shopee Live XTRA), dan insentif potongan untuk UMK.</li>
+      <li>Pajak penghasilan usahamu.</li>
+      <li>Tarif TikTok Shop bersumber dari pemberitaan karena tabel resminya hanya ada di Seller Center. Selalu cek ulang di sana.</li>
+    </ul>
+    <p>Hasil aplikasi ini perkiraan. Cocokkan sesekali dengan halaman Rincian Penghasilan di marketplace.</p>
+
+    <h3>Sumber</h3>
+    <div id="docRefs"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const KEY = 'antiboncos:v3:';
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem(KEY + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(KEY + k, JSON.stringify(v)); } catch {} },
+  };
+
+  // ---------- numbers (Indonesian: 1.234.567 and 2,5) ----------
+  const parse = (s) => {
+    if (typeof s === 'number') return s;
+    s = String(s || '').replace(/\s|Rp/gi, '');
+    if (!s) return 0;
+    if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');
+    else if (/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, '');
+    const n = parseFloat(s);
+    return Number.isFinite(n) ? n : 0;
+  };
+  const rp = (n) => (n < 0 ? '−Rp' : 'Rp') + Math.round(Math.abs(n)).toLocaleString('id-ID');
+  const pc = (n) => (Number.isFinite(n) ? (Math.round(n * 10) / 10).toLocaleString('id-ID') : '-') + '%';
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  function money(el) {   // pretty-print numeric inputs when leaving the field
+    el.addEventListener('blur', () => { if (el.inputMode === 'numeric') { const n = parse(el.value); el.value = Math.round(n).toLocaleString('id-ID'); } });
+  }
+  const toast = (m) => { const t = $('toast'); t.textContent = m; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 1700); };
+
+  // ---------- stores and fees (examples; the user edits them) ----------
+  // Preset tariffs, checked against the sources listed in "Dasar hitungan" (SOURCES below).
+  // Defaults use the highest rate in each official range, so the suggested price errs on the safe side.
+  const CHECKED = '23 Nov 2026';
+  const SOURCES = {
+    shopee: { name: 'Shopee Seller Centre: Ringkasan Jenis Biaya untuk Berjualan di Shopee', url: 'https://seller.shopee.co.id/edu/article/3489', note: 'diperbarui 3 Nov 2026' },
+    shopeeAdmin: { name: 'Shopee Seller Centre: Biaya Administrasi Penjual Shopee', url: 'https://seller.shopee.co.id/edu/article/7187', note: 'diperbarui 16 Nov 2026' },
+    tiktok: { name: 'Bisnis.com: Biaya Wajib Seller, TikTok Shop vs Shopee', url: 'https://teknologi.bisnis.com/read/20260521/266/1975364/biaya-wajib-seller-tiktok-shop-vs-shopee-siapa-paling-banyak', note: '21 Mei 2026, pemberitaan' },
+    tiktokCap: { name: 'Metrotvnews: Komisi TikTok Shop Dipangkas, Maksimal Rp60 Ribu/Item', url: 'https://www.metrotvnews.com/read/k8oCQyP4-komisi-tiktok-shop-dipangkas-maksimal-rp60-ribu-item', note: 'pemberitaan, berlaku 16 Sep 2026' },
+    qris: { name: 'Bank Indonesia: MDR QRIS Bagi Merchant, Kategorisasi dan Simulasi', url: 'https://www.bi.go.id/id/publikasi/ruang-media/cerita-bi/Pages/mdr-QRIS.aspx', note: 'berlaku 1 Okt 2026 (Siaran Pers No. 28/159/DKom)' },
+    margin: { name: 'AccountingCoach: Gross Margin and Markup', url: 'https://www.accountingcoach.com/blog/gross-margin-markup', note: 'definisi margin dan markup' },
+    cogs: { name: 'AccountingTools: What is Cost of Goods Sold (COGS)', url: 'https://www.accountingtools.com/articles/what-is-cogs-cost-of-goods-sold.html', note: 'definisi HPP' },
+    leftdigit: { name: 'Thomas, M. & Morwitz, V. (2005). Penny Wise and Pound Foolish: The Left-Digit Effect in Price Cognition. Journal of Consumer Research, 32(1), 54 to 64', url: 'https://doi.org/10.1086/429600', note: 'jurnal ilmiah' },
+    uupk: { name: 'UU No. 8 Tahun 1999 tentang Perlindungan Konsumen, Pasal 9 ayat (1) huruf a dan Pasal 62', url: 'https://peraturan.go.id/files/uu8-1999.pdf', note: 'peraturan.go.id' },
+  };
+  const PRESET = () => [
+    { id: 'shopee', name: 'Shopee', src: 'shopee', fees: [
+      { n: 'Biaya administrasi', t: 'pct', v: 10, on: true, note: 'resmi 2,50 sampai 10,00% sesuai kategori, Non-Star dan Star' },
+      { n: 'Biaya proses pesanan', t: 'fix', v: 1250, on: true, note: 'resmi Rp1.250 per pesanan selesai' },
+      { n: 'Gratis Ongkir XTRA', t: 'pct', v: 8, cap: 40000, on: false, note: 'program opsional, 1 sampai 8% sesuai kategori' },
+      { n: 'Promo XTRA', t: 'pct', v: 4.5, cap: 60000, on: false, note: 'program opsional' },
+      { n: 'Komisi affiliate', t: 'pct', v: 5, on: false, note: 'sesuai komisi yang kamu atur sendiri' },
+    ]},
+    { id: 'tiktok', name: 'TikTok Shop', src: 'tiktok', fees: [
+      { n: 'Komisi platform', t: 'pct', v: 10, on: true, note: 'dilaporkan 2,5 sampai 10% untuk non-Mall, cek Seller Center' },
+      { n: 'Komisi dinamis', t: 'pct', v: 0, cap: 60000, on: false, note: 'isi sesuai Seller Center, dilaporkan maks Rp60.000 per item' },
+      { n: 'Komisi affiliate', t: 'pct', v: 10, on: false, note: 'sesuai komisi yang kamu atur sendiri' },
+    ]},
+    { id: 'wa', name: 'WhatsApp (QRIS)', src: 'qris', fees: [
+      { n: 'MDR QRIS usaha mikro', t: 'pct', v: 0.3, min: 500000, on: true, note: '0% sampai Rp500.000, 0,3% di atasnya (Bank Indonesia)' },
+    ]},
+  ];
+  let stores = store.get('stores', null) || PRESET();
+  const saveStores = () => store.set('stores', stores);
+  const byId = (id) => stores.find((s) => s.id === id) || stores[0];
+
+  function feesAt(st, price, disc) {
+    const base = price * (1 - (disc || 0) / 100);
+    const parts = [];
+    for (const f of st.fees) {
+      if (!f.on) continue;
+      if (parse(f.min) > 0 && base <= parse(f.min)) continue;   // tiered fee, e.g. QRIS 0% up to a threshold
+      let a = f.t === 'pct' ? base * parse(f.v) / 100 : parse(f.v);
+      if (f.t === 'pct' && parse(f.cap) > 0) a = Math.min(a, parse(f.cap));
+      parts.push({ n: f.n, a });
+    }
+    const total = parts.reduce((s, p) => s + p.a, 0);
+    return { base, parts, total, payout: base - total };
+  }
+  const profitAt = (st, price, cost, disc) => feesAt(st, price, disc).payout - cost;
+  function minPrice(st, cost, disc, target, isPct) {
+    const ok = (p) => { const pr = profitAt(st, p, cost, disc); return isPct ? pr >= p * (1 - disc / 100) * target / 100 : pr >= target; };
+    // Bisection finds the lowest price that meets the target. Profit rises with price except at
+    // tier thresholds (a fee that only starts above some price), so each tier is searched separately.
+    const bisect = (lo, hi) => { for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; ok(m) ? (hi = m) : (lo = m); } return Math.ceil(hi); };
+    let hi = Math.max(1000, (cost + (isPct ? 0 : target)) * 2), g = 0;
+    while (!ok(hi) && g++ < 50) hi *= 2;
+    const answers = [];
+    if (ok(hi)) answers.push(bisect(0, hi));
+    const tiers = st.fees.filter((f) => f.on && parse(f.min) > 0).map((f) => parse(f.min) / (1 - disc / 100));
+    for (const t of tiers) if (ok(t)) answers.push(bisect(0, t));
+    return answers.length ? Math.min(...answers) : NaN;
+  }
+  function nice(p) {   // next price ending in 900 (or 500 for small prices)
+    if (!Number.isFinite(p)) return NaN;
+    if (p < 10000) return Math.ceil(p / 500) * 500;
+    const step = p < 1000000 ? 1000 : 10000;
+    let c = Math.ceil(p / step) * step - 100;
+    if (c < p) c += step;
+    return c;
+  }
+  // Rounded price that still meets the target (rounding up can cross a fee tier, so re-check).
+  function safeNice(st, cost, disc, target, isPct, min) {
+    let p = nice(min);
+    const meets = (x) => { const pr = profitAt(st, x, cost, disc); return isPct ? pr >= x * (1 - disc / 100) * target / 100 - 0.5 : pr >= target - 0.5; };
+    for (let i = 0; i < 20 && Number.isFinite(p) && !meets(p); i++) p = nice(p + 1);
+    return p;
+  }
+  const feeSummary = (st) => {
+    const on = st.fees.filter((f) => f.on);
+    const pcts = on.filter((f) => f.t === 'pct' && !parse(f.min)).reduce((s, f) => s + parse(f.v), 0);
+    const fix = on.filter((f) => f.t === 'fix').reduce((s, f) => s + parse(f.v), 0);
+    const tiered = on.filter((f) => f.t === 'pct' && parse(f.min)).map((f) => `${pc(parse(f.v))} di atas ${rp(parse(f.min))}`);
+    return [pcts ? pc(pcts) : '', fix ? rp(fix) + '/pesanan' : '', ...tiered].filter(Boolean).join(' + ') || 'tanpa potongan';
+  };
+
+  // ---------- store pickers ----------
+  const picked = store.get('picked', { harga: 'shopee', produk: 'shopee' });
+  function renderPickers() {
+    document.querySelectorAll('[data-stores]').forEach((box) => {
+      const key = box.dataset.stores;
+      if (!stores.some((s) => s.id === picked[key])) picked[key] = stores[0].id;
+      box.innerHTML = stores.map((s) => `<button data-id="${s.id}" class="${s.id === picked[key] ? 'on' : ''}">${esc(s.name)}</button>`).join('');
+    });
+  }
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-stores] button'); if (!b) return;
+    picked[b.parentElement.dataset.stores] = b.dataset.id; store.set('picked', picked);
+    renderPickers(); calcHarga(); calcProduk(false);
+  });
+
+  // ---------- HARGA JUAL ----------
+  let unit = store.get('unit', 'rp');
+  function calcHarga() {
+    const st = byId(picked.harga);
+    $('hFeeLine').innerHTML = `Potongan ${esc(st.name)}: ${feeSummary(st)} · <button class="link" data-go="tarif">Ubah</button>`;
+    const hpp = parse($('hHpp').value), pack = parse($('hPack').value), cost = hpp + pack;
+    const disc = $('hDiscOn').checked ? parse($('hDisc').value) : 0;
+    const target = parse($('hTarget').value), isPct = unit === 'pct';
+    const min = minPrice(st, cost, disc, target, isPct);
+    const notice = $('hNotice');
+    if (!Number.isFinite(min)) {
+      $('hNice').textContent = '-'; $('hExplain').textContent = 'Total potongan 100% atau lebih. Cek tarif toko.';
+      ['hPayout', 'hProfit'].forEach((id) => ($(id).textContent = '-'));
+      notice.hidden = true; return;
+    }
+    const price = safeNice(st, cost, disc, target, isPct, min);
+    const f = feesAt(st, price, disc);
+    const profit = f.payout - cost;
+    $('hNice').textContent = rp(price);
+    $('hExplain').textContent = `Harga paling rendah ${rp(min)}. Dibulatkan supaya enak dilihat pembeli.`;
+    $('hPayout').textContent = rp(f.payout);
+    $('hProfit').textContent = `${rp(profit)} (${pc(profit / f.base * 100)})`;
+
+    const discAmt = price - f.base;
+    const segs = [['Untung', profit, '#0f8a4c'], ['Modal', hpp, '#9ca3af'], ['Kemasan', pack, '#d1d5db'], ['Voucher', discAmt, '#f59e0b']]
+      .concat(f.parts.map((p) => [p.n, p.a, '#ef4444']));
+    const sum = segs.reduce((s, x) => s + Math.max(0, x[1]), 0) || 1;
+    $('hBar').innerHTML = segs.map(([, v, c]) => `<i style="width:${Math.max(0, v) / sum * 100}%;background:${c}"></i>`).join('');
+    $('hBreak').innerHTML = [
+      ['Harga di toko', rp(price)],
+      discAmt > 0 ? ['Voucher ' + pc(disc), '−' + rp(discAmt)] : null,
+      ...f.parts.map((p) => [p.n, '−' + rp(p.a)]),
+      ['Uang masuk', rp(f.payout)],
+      ['Modal + kemasan', '−' + rp(cost)],
+      ['Untung bersih', rp(profit)],
+      ['Total dipotong toko', pc(f.total / f.base * 100) + ' dari harga'],
+    ].filter(Boolean).map(([k, v]) => `<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+
+    if (!isPct) {
+      const naive = cost + target, real = profitAt(st, naive, cost, disc);
+      if (real < target - 1) {
+        notice.hidden = false;
+        notice.className = 'notice' + (real < 0 ? ' bad' : '');
+        notice.textContent = `Kalau cuma pasang ${rp(naive)} (modal + untung), untungmu tinggal ${rp(real)} per barang karena terpotong ${rp(target - real)}.`;
+      } else notice.hidden = true;
+    } else notice.hidden = true;
+
+    // same profit in other stores
+    $('hOther').innerHTML = stores.map((s) => {
+      const m = minPrice(s, cost, disc, isPct ? target : profit, isPct);
+      const p = safeNice(s, cost, disc, isPct ? target : profit, isPct, m);
+      return `<button class="store-row ${s.id === st.id ? 'cur' : ''}" data-pick="${s.id}"><div class="s"><b>${esc(s.name)}</b><small>potongan ${feeSummary(s)}</small></div><div class="p">${Number.isFinite(p) ? rp(p) : '-'}<small>${s.id === st.id ? 'dipilih' : 'untung sama'}</small></div></button>`;
+    }).join('');
+    store.set('harga', { hpp: $('hHpp').value, pack: $('hPack').value, target: $('hTarget').value, disc: $('hDisc').value, discOn: $('hDiscOn').checked });
+  }
+  $('hOther').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-pick]'); if (!b) return;
+    picked.harga = b.dataset.pick; store.set('picked', picked); renderPickers(); calcHarga(); window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  function setUnit(u) {
+    unit = u; store.set('unit', u);
+    document.querySelectorAll('#hUnit button').forEach((b) => b.classList.toggle('on', b.dataset.v === u));
+    $('hTargetPre').textContent = u === 'rp' ? 'Rp' : '';
+    $('hTarget').inputMode = 'numeric';
+    $('hTargetHint').textContent = u === 'rp' ? 'bersih, per barang' : 'persen dari harga setelah voucher';
+  }
+  document.querySelectorAll('#hUnit button').forEach((b) => (b.onclick = () => { setUnit(b.dataset.v); $('hTarget').value = b.dataset.v === 'rp' ? '15.000' : '20'; calcHarga(); }));
+  $('hDiscOn').onchange = () => { $('hDiscRow').hidden = !$('hDiscOn').checked; calcHarga(); };
+
+  // ---------- CEK PRODUK ----------
+  let items = store.get('items', [
+    { n: 'Kaos polos hitam', c: 38000, p: 55000 },
+    { n: 'Hoodie oversize', c: 95000, p: 129000 },
+    { n: 'Totebag kanvas', c: 18000, p: 21000 },
+  ]);
+  function calcProduk(rebuild) {
+    const st = byId(picked.produk), minPct = parse($('pMin').value);
+    const list = $('pList');
+    if (rebuild) {
+      list.innerHTML = items.length ? items.map((it, i) => `<div class="prod" data-i="${i}">
+        <div class="prod-top"><input data-k="n" value="${esc(it.n)}" aria-label="Nama produk"><button data-del aria-label="Hapus produk">Hapus</button></div>
+        <div class="prod-grid">
+          <div><label>Modal</label><div class="money"><span>Rp</span><input data-k="c" inputmode="numeric" value="${Math.round(it.c).toLocaleString('id-ID')}"></div></div>
+          <div><label>Harga jual</label><div class="money"><span>Rp</span><input data-k="p" inputmode="numeric" value="${Math.round(it.p).toLocaleString('id-ID')}"></div></div>
+        </div>
+        <div class="prod-res"></div><div class="fix" hidden></div></div>`).join('') : '<div class="prod muted-note">Belum ada produk.</div>';
+      list.querySelectorAll('input[inputmode=numeric]').forEach(money);
+    }
+    let ok = 0, thin = 0, loss = 0;
+    list.querySelectorAll('.prod[data-i]').forEach((el) => {
+      const it = items[+el.dataset.i];
+      const f = feesAt(st, it.p, 0), profit = f.payout - it.c, margin = it.p ? profit / it.p * 100 : 0;
+      const state = profit < 0 ? 'loss' : margin < minPct ? 'thin' : 'ok';
+      state === 'ok' ? ok++ : state === 'thin' ? thin++ : loss++;
+      const color = { ok: 'var(--good)', thin: 'var(--warn)', loss: 'var(--bad)' }[state];
+      const label = { ok: 'Aman', thin: 'Untung tipis', loss: 'Rugi' }[state];
+      el.querySelector('.prod-res').innerHTML = `<span><i class="dot" style="background:${color}"></i><b style="color:${color}">${label}</b></span><span>untung <b class="${profit < 0 ? 'neg' : ''}">${rp(profit)}</b> · ${pc(margin)}</span>`;
+      const fix = el.querySelector('.fix');
+      if (state !== 'ok') {
+        const safe = safeNice(st, it.c, 0, minPct, true, minPrice(st, it.c, 0, minPct, true));
+        fix.hidden = false;
+        fix.innerHTML = `<span>Naikkan ke <b>${rp(safe)}</b> supaya untung ${pc(minPct)}</span><button data-fix="${safe}">Pakai</button>`;
+      } else fix.hidden = true;
+    });
+    $('pSummary').innerHTML = `<div><b style="color:var(--good)">${ok}</b><span>Aman</span></div><div><b style="color:var(--warn)">${thin}</b><span>Untung tipis</span></div><div><b style="color:var(--bad)">${loss}</b><span>Rugi</span></div>`;
+    store.set('items', items); store.set('pMin', $('pMin').value);
+  }
+  $('pList').addEventListener('input', (e) => {
+    const el = e.target.closest('.prod'); if (!el || !e.target.dataset.k) return;
+    const it = items[+el.dataset.i], k = e.target.dataset.k;
+    it[k] = k === 'n' ? e.target.value : parse(e.target.value);
+    calcProduk(false);
+  });
+  $('pList').addEventListener('click', (e) => {
+    const el = e.target.closest('.prod'); if (!el) return;
+    if (e.target.hasAttribute('data-del')) { items.splice(+el.dataset.i, 1); calcProduk(true); toast('Produk dihapus'); }
+    if (e.target.dataset.fix) { items[+el.dataset.i].p = +e.target.dataset.fix; calcProduk(true); toast('Harga diperbarui'); }
+  });
+  $('pAdd').onclick = () => { items.push({ n: 'Produk baru', c: 0, p: 0 }); calcProduk(true); const last = $('pList').lastElementChild; last && last.querySelector('input').select(); };
+  $('pMin').addEventListener('input', () => calcProduk(false));
+  $('pExport').onclick = () => {
+    const st = byId(picked.produk);
+    const rows = ['nama,modal,harga,untung'].concat(items.map((it) => `"${String(it.n).replace(/"/g, '""')}",${Math.round(it.c)},${Math.round(it.p)},${Math.round(profitAt(st, it.p, it.c, 0))}`));
+    const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob(['﻿' + rows.join('\n')], { type: 'text/csv' })), download: 'produk-anti-boncos.csv' });
+    a.click();
+  };
+  $('pImport').onchange = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const rows = (await file.text()).split(/\r?\n/).map((l) => l.split(/[,;\t]/)).filter((r) => r.length >= 3 && parse(r[1]) > 0);
+    if (!rows.length) { toast('Format tidak dikenali'); return; }
+    items = rows.map((r) => ({ n: r[0].replace(/^"|"$/g, ''), c: parse(r[1]), p: parse(r[2]) }));
+    calcProduk(true); toast(items.length + ' produk diimpor'); e.target.value = '';
+  };
+
+  // ---------- TARIF ----------
+  function renderTarif() {
+    $('tList').innerHTML = stores.map((s, si) => `<div class="card store-card" data-s="${si}">
+      <div class="store-head"><input data-sk="name" value="${esc(s.name)}" aria-label="Nama toko"><small>${feeSummary(s)}</small></div>
+      ${s.fees.map((f, fi) => `<div class="fee" data-f="${fi}">
+        <label class="switch"><input type="checkbox" data-fk="on" ${f.on ? 'checked' : ''} aria-label="Aktifkan ${esc(f.n)}"><i></i></label>
+        <div class="fn"><input data-fk="n" value="${esc(f.n)}" aria-label="Nama potongan"><small>${f.t === 'pct'
+          ? (parse(f.cap) || f._cap
+            ? `dari harga · maks Rp <input data-fk="cap" inputmode="numeric" value="${parse(f.cap) ? Math.round(parse(f.cap)).toLocaleString('id-ID') : ''}" placeholder="isi">`
+            : 'dari harga · <button class="link" data-cap style="font-size:12px">atur batas</button>')
+          : 'per pesanan'}${parse(f.min) ? ` · berlaku jika harga di atas ${rp(parse(f.min))}` : ''}</small>${f.note ? `<small class="fnote">${esc(f.note)}</small>` : ''}</div>
+        <div class="money">${f.t === 'fix' ? '<span>Rp</span>' : ''}<input data-fk="v" inputmode="${f.t === 'pct' ? 'decimal' : 'numeric'}" value="${f.t === 'pct' ? String(f.v).replace('.', ',') : Math.round(parse(f.v)).toLocaleString('id-ID')}">${f.t === 'pct' ? '<span>%</span>' : ''}</div>
+        <button class="del" data-delfee aria-label="Hapus potongan">×</button></div>`).join('')}
+      ${s.src && SOURCES[s.src] ? `<div class="store-src">Sumber: <a href="${SOURCES[s.src].url}" target="_blank" rel="noopener">${esc(SOURCES[s.src].name)}</a> · dicek ${CHECKED}</div>` : ''}
+      <div class="store-foot"><button class="link" data-addpct>+ Potongan %</button><button class="link" data-addfix>+ Potongan Rp</button><button class="link" data-delstore style="color:var(--mute);margin-left:auto">Hapus toko</button></div>
+    </div>`).join('');
+    $('tList').querySelectorAll('input[inputmode=numeric]').forEach(money);
+  }
+  const tarifChanged = () => { saveStores(); renderPickers(); calcHarga(); calcProduk(false); };
+  $('tList').addEventListener('input', (e) => {
+    const card = e.target.closest('[data-s]'); if (!card) return;
+    const s = stores[+card.dataset.s];
+    if (e.target.dataset.sk === 'name') { s.name = e.target.value || 'Toko'; tarifChanged(); return; }
+    const row = e.target.closest('[data-f]'); if (!row) return;
+    const f = s.fees[+row.dataset.f], k = e.target.dataset.fk;
+    if (k === 'on') f.on = e.target.checked; else if (k === 'n') f.n = e.target.value; else f[k] = parse(e.target.value);
+    card.querySelector('.store-head small').textContent = feeSummary(s);
+    tarifChanged();
+  });
+  $('tList').addEventListener('click', (e) => {
+    const card = e.target.closest('[data-s]'); if (!card) return;
+    const s = stores[+card.dataset.s];
+    if (e.target.hasAttribute('data-cap')) {
+      const fi = e.target.closest('[data-f]').dataset.f;
+      s.fees[+fi]._cap = true;
+      renderTarif();
+      const inp = $('tList').querySelector(`[data-s="${card.dataset.s}"] [data-f="${fi}"] [data-fk="cap"]`);
+      if (inp) inp.focus();
+      return;
+    }
+    if (e.target.hasAttribute('data-delfee')) s.fees.splice(+e.target.closest('[data-f]').dataset.f, 1);
+    else if (e.target.hasAttribute('data-addpct')) s.fees.push({ n: 'Potongan baru', t: 'pct', v: 0, on: true });
+    else if (e.target.hasAttribute('data-addfix')) s.fees.push({ n: 'Biaya per pesanan', t: 'fix', v: 0, on: true });
+    else if (e.target.hasAttribute('data-delstore')) { if (stores.length < 2) { toast('Minimal satu toko'); return; } stores.splice(+card.dataset.s, 1); }
+    else return;
+    renderTarif(); tarifChanged();
+  });
+  $('tAddStore').onclick = () => { stores.push({ id: 's' + Date.now(), name: 'Toko baru', fees: [{ n: 'Biaya admin', t: 'pct', v: 5, on: true }] }); renderTarif(); tarifChanged(); window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); };
+  $('tReset').onclick = () => { stores = PRESET(); renderTarif(); tarifChanged(); toast('Tarif kembali ke contoh awal'); };
+
+  // ---------- RESEP ----------
+  let recipe = store.get('recipe', [
+    { n: 'Tepung terigu', price: 14000, size: 1000, use: 250 },
+    { n: 'Cokelat batang', price: 32000, size: 250, use: 200 },
+    { n: 'Gula pasir', price: 17000, size: 1000, use: 200 },
+    { n: 'Telur', price: 2200, size: 1, use: 4 },
+    { n: 'Mentega', price: 26000, size: 200, use: 150 },
+  ]);
+  function calcResep(rebuild) {
+    const list = $('rList');
+    if (rebuild) {
+      list.innerHTML = recipe.map((r, i) => `<div class="ing" data-i="${i}">
+        <div class="ing-top"><input data-k="n" value="${esc(r.n)}" aria-label="Nama bahan"><span class="ing-cost"></span><button class="link" data-del style="color:var(--mute)">Hapus</button></div>
+        <div class="ing-grid">
+          <div><label>Harga beli</label><div class="money"><span>Rp</span><input data-k="price" inputmode="numeric" value="${Math.round(r.price).toLocaleString('id-ID')}"></div></div>
+          <div><label>Isi kemasan</label><div class="money"><input data-k="size" inputmode="decimal" value="${String(r.size).replace('.', ',')}"></div></div>
+          <div><label>Dipakai</label><div class="money"><input data-k="use" inputmode="decimal" value="${String(r.use).replace('.', ',')}"></div></div>
+        </div></div>`).join('');
+      list.querySelectorAll('input[inputmode=numeric]').forEach(money);
+    }
+    let bahan = 0;
+    list.querySelectorAll('.ing').forEach((el) => {
+      const r = recipe[+el.dataset.i], c = r.size > 0 ? r.price / r.size * r.use : 0;
+      bahan += c; el.querySelector('.ing-cost').textContent = rp(c);
+    });
+    const n = Math.max(1, parse($('rYield').value)), over = bahan * parse($('rOver').value) / 100, pack = parse($('rPack').value);
+    const hpp = (bahan + over) / n + pack;
+    $('rHpp').textContent = rp(hpp);
+    $('rExplain').textContent = `Bahan ${rp(bahan)} + gas/listrik/tenaga ${rp(over)}, dibagi ${n} pcs, ditambah kemasan ${rp(pack)}.`;
+    store.set('recipe', recipe); store.set('recipeMeta', { y: $('rYield').value, p: $('rPack').value, o: $('rOver').value });
+    return hpp;
+  }
+  $('rList').addEventListener('input', (e) => {
+    const el = e.target.closest('.ing'); if (!el || !e.target.dataset.k) return;
+    const r = recipe[+el.dataset.i], k = e.target.dataset.k;
+    r[k] = k === 'n' ? e.target.value : parse(e.target.value); calcResep(false);
+  });
+  $('rList').addEventListener('click', (e) => { if (e.target.hasAttribute('data-del')) { recipe.splice(+e.target.closest('.ing').dataset.i, 1); calcResep(true); } });
+  $('rAdd').onclick = () => { recipe.push({ n: 'Bahan baru', price: 0, size: 1000, use: 0 }); calcResep(true); };
+  ['rYield', 'rPack', 'rOver'].forEach((id) => $(id).addEventListener('input', () => calcResep(false)));
+  const openSheet = () => { calcResep(true); $('sheetBg').style.display = 'block'; requestAnimationFrame(() => $('sheet').classList.add('open')); };
+  const closeSheet = () => { $('sheet').classList.remove('open'); setTimeout(() => ($('sheetBg').style.display = 'none'), 220); };
+  $('openRecipe').onclick = openSheet; $('sheetClose').onclick = closeSheet; $('sheetBg').onclick = closeSheet;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+  $('rUse').onclick = () => { const h = calcResep(false); $('hHpp').value = Math.round(h).toLocaleString('id-ID'); $('hPack').value = '0'; closeSheet(); calcHarga(); toast('Modal ' + rp(h) + ' dipakai'); };
+
+  // ---------- dasar hitungan (formulas and sources) ----------
+  (function buildDoc() {
+    const order = ['shopee', 'shopeeAdmin', 'tiktok', 'tiktokCap', 'qris', 'margin', 'cogs', 'leftdigit', 'uupk'];
+    $('docChecked').textContent = CHECKED;
+    $('docRefs').innerHTML = order.map((k, i) => `<div class="ref" id="ref-${k}">[${i + 1}] <a href="${SOURCES[k].url}" target="_blank" rel="noopener">${esc(SOURCES[k].name)}</a> <small>· ${esc(SOURCES[k].note)}</small></div>`).join('');
+    document.querySelectorAll('.cite').forEach((c) => {
+      const n = order.indexOf(c.dataset.src) + 1;
+      c.innerHTML = `<a href="#ref-${c.dataset.src}">[${n}]</a>`;
+      c.querySelector('a').onclick = (e) => { e.preventDefault(); $('ref-' + c.dataset.src).scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+    });
+  })();
+  const openDoc = () => { $('docBg').style.display = 'block'; requestAnimationFrame(() => $('doc').classList.add('open')); };
+  const closeDoc = () => { $('doc').classList.remove('open'); setTimeout(() => ($('docBg').style.display = 'none'), 220); };
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-open-doc]')) openDoc(); });
+  $('docClose').onclick = closeDoc; $('docBg').onclick = closeDoc;
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDoc(); });
+
+  // ---------- navigation ----------
+  function go(name) {
+    document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('on', s.id === 's-' + name));
+    document.querySelectorAll('nav.tabs button').forEach((b) => b.classList.toggle('on', b.dataset.go === name));
+    if (name === 'tarif') renderTarif();
+    store.set('screen', name); window.scrollTo({ top: 0 });
+  }
+  document.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (b) go(b.dataset.go); });
+
+  // ---------- start ----------
+  const h = store.get('harga', null);
+  if (h) { $('hHpp').value = h.hpp; $('hPack').value = h.pack; $('hTarget').value = h.target; $('hDisc').value = h.disc; $('hDiscOn').checked = !!h.discOn; }
+  $('hDiscRow').hidden = !$('hDiscOn').checked;
+  $('pMin').value = store.get('pMin', '10');
+  const rm = store.get('recipeMeta', null); if (rm) { $('rYield').value = rm.y; $('rPack').value = rm.p; $('rOver').value = rm.o; }
+  setUnit(unit);
+  ['hHpp', 'hPack', 'hTarget', 'hDisc'].forEach((id) => { $(id).addEventListener('input', calcHarga); money($(id)); });
+  ['rYield', 'rPack', 'rOver'].forEach((id) => money($(id)));
+  money($('pMin'));
+  renderPickers(); calcHarga(); calcProduk(true);
+  const q = new URLSearchParams(location.search).get('screen');
+  go(['harga', 'produk', 'tarif'].includes(q) ? q : store.get('screen', 'harga'));
+  if (new URLSearchParams(location.search).get('resep')) openSheet();
+  if (new URLSearchParams(location.search).get('dasar')) openDoc();
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('sw.js').catch(() => {});
+})();
+</script>
+</body>
+</html>
