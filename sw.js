@@ -1,5 +1,5 @@
 // Offline cache: after the first visit the calculator works without internet.
-const CACHE = 'anti-boncos-v1';
+const CACHE = 'anti-boncos-v2';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (e) => {

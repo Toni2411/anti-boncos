@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#ebeae6">
+<meta name="theme-color" content="#fff5e6">
 <title>Anti Boncos</title>
 <meta name="description" content="Kalkulator harga jual gratis untuk seller Shopee, TikTok Shop, dan jualan langsung. Rumus dan tarif bersumber resmi.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap">
 <link rel="preconnect" href="https://api.fontshare.com" crossorigin>
 <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
@@ -255,6 +258,95 @@
   .toast { position: fixed; left: 50%; bottom: 96px; transform: translateX(-50%) translateY(10px); background: var(--ink); color: #fff; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; opacity: 0; transition: .2s; z-index: 30; pointer-events: none; white-space: nowrap; }
   .toast.show { opacity: 1; transform: translateX(-50%); }
   footer { text-align: center; font-size: 12px; color: var(--mute); margin-top: 28px; }
+
+  /* ===== Visual layer v4: soft neubrutalism (cream, ink outlines, offset shadows, candy colors) ===== */
+  :root {
+    --bg: #fff5e6; --surface: #fff; --ink: #1b1a17; --ink-2: #3d3a33; --mute: #6f6a5f; --line: rgba(27,26,23,.14); --soft: #fffaf2;
+    --yellow: #ffd23f; --pink: #ff9ccf; --mint: #8fe3bd; --sky: #a8d1ff; --orange: #ff7a45;
+    --accent: #ff7a45; --good: #0b7a4b; --r: 18px; --bd: 2px solid var(--ink); --sh: 4px 4px 0 var(--ink); --sh-sm: 3px 3px 0 var(--ink);
+    color-scheme: light;
+  }
+  body { background-color: var(--bg); background-image: radial-gradient(rgba(27,26,23,.09) 1px, transparent 1px); background-size: 18px 18px; color: var(--ink); }
+  h1, h2, h3, .answer, .summary div b, .section-title { font-family: 'Bricolage Grotesque', 'Satoshi', system-ui, sans-serif; }
+
+  .brand { background: var(--yellow); border: var(--bd); box-shadow: var(--sh-sm); color: var(--ink); font-weight: 800; transform: rotate(-2deg); }
+  .brand::before { background: var(--ink); box-shadow: none; }
+  header h1 { font-weight: 800; letter-spacing: -.03em; }
+  .hero h1 { font-size: 42px; line-height: 1.04; }
+  .hero h1 span { color: var(--ink); display: inline; background: linear-gradient(transparent 58%, var(--pink) 58%, var(--pink) 92%, transparent 92%); padding: 0 2px; }
+  .hero p { color: var(--ink-2); font-weight: 500; }
+
+  .label { font-weight: 800; }
+  .step i { border: var(--bd); background: var(--mint); font-weight: 800; width: 24px; height: 24px; font-size: 12px; }
+  .step.s2 i { background: var(--sky); }
+  .label a, .link { text-decoration-color: var(--orange); text-decoration-thickness: 2px; font-weight: 700; }
+
+  .stores { background: transparent; padding: 0 4px 4px 0; gap: 8px; flex-wrap: wrap; box-shadow: none; display: flex; }
+  .stores button { background: var(--surface); border: var(--bd); border-radius: 999px; color: var(--ink); padding: 8px 14px; font-weight: 700; box-shadow: var(--sh-sm); transition: transform .08s, box-shadow .08s; }
+  .stores button.on { background: var(--orange); color: var(--ink); box-shadow: var(--sh-sm); }
+  .stores button:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
+
+  .card { border: var(--bd); border-radius: var(--r); box-shadow: var(--sh); background: var(--surface); }
+  .field { border-bottom: 1.5px dashed var(--line); }
+  .money { background: var(--soft); border: var(--bd); border-radius: 12px; }
+  .money:focus-within { background: #fff; box-shadow: var(--sh-sm); border-color: var(--ink); }
+  .money input { font-weight: 800; color: var(--ink); }
+  .unit { border: var(--bd); border-radius: 10px; overflow: hidden; background: #fff; padding: 0; }
+  .unit button { border-radius: 0; }
+  .unit button.on { background: var(--yellow); color: var(--ink); }
+  .switch input:checked + i { background: var(--good); }
+
+  /* the answer: big yellow sticker */
+  #hResult { background: var(--yellow); color: var(--ink); padding: 22px; box-shadow: 6px 6px 0 var(--ink); }
+  #hResult .k { color: var(--ink); font-weight: 800; letter-spacing: .08em; }
+  #hResult .answer { color: var(--ink); font-size: 54px; font-weight: 800; letter-spacing: -.035em; }
+  #hResult .explain { color: var(--ink-2); font-weight: 500; }
+  #hResult .rows { border-top: 2px solid var(--ink); }
+  #hResult .row { border-bottom: 1.5px dashed rgba(27,26,23,.35); }
+  #hResult .row span { color: var(--ink-2); }
+  #hResult .row b { color: var(--ink); }
+  #hResult .pos { color: var(--ink); background: var(--mint); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 10px; }
+  #hResult summary { color: var(--ink); text-decoration-color: var(--ink); }
+  #hResult .bar { background: rgba(27,26,23,.12); }
+  #hResult .notice { background: #fff; color: var(--ink); border: var(--bd); }
+  #hResult .notice.bad { background: var(--pink); color: var(--ink); }
+
+  .notice { border: var(--bd); background: #fff3c4; color: var(--ink); }
+  .notice.bad { background: #ffd6e8; color: var(--ink); }
+  .other h3, .section-title { font-size: 16px; font-weight: 800; letter-spacing: -.01em; }
+  .store-row { border-bottom: 1.5px dashed var(--line); }
+  .store-row.cur { background: #fff3c4; }
+  .store-row .p { font-weight: 800; }
+
+  .btn { background: var(--ink); color: #fff; border: var(--bd); border-radius: 14px; font-weight: 800; box-shadow: var(--sh-sm); transition: transform .08s, box-shadow .08s; }
+  .btn.secondary { background: #fff; color: var(--ink); }
+  .btn:active, .fix button:active { transform: translate(3px,3px); box-shadow: 0 0 0 var(--ink); }
+  .fix { border: var(--bd); background: #fff3c4; border-radius: 12px; }
+  .fix button { background: var(--ink); color: #fff; border: var(--bd); border-radius: 10px; box-shadow: 2px 2px 0 var(--ink); }
+
+  .summary { background: transparent; border: 0; box-shadow: none; gap: 10px; padding: 0; }
+  .summary > div { border: var(--bd); border-radius: 14px; box-shadow: var(--sh-sm); padding: 12px 6px; background: #fff; }
+  .summary > div:nth-child(1) { background: var(--mint); }
+  .summary > div:nth-child(2) { background: var(--yellow); }
+  .summary > div:nth-child(3) { background: var(--pink); }
+  .summary div b { font-size: 30px; font-weight: 800; color: var(--ink) !important; }
+  .summary div span, .summary div small { color: var(--ink); font-weight: 700; }
+
+  nav.tabs { background: #fff; border: var(--bd); box-shadow: var(--sh); backdrop-filter: none; border-radius: 18px; }
+  nav.tabs button { color: var(--ink); border-radius: 12px; font-weight: 700; }
+  nav.tabs button.on { background: var(--yellow); color: var(--ink) !important; box-shadow: inset 0 0 0 2px var(--ink); }
+
+  .sheet { background: var(--bg); border-top: var(--bd); }
+  .sheet .grab { background: var(--ink); }
+  .x { background: #fff; border: var(--bd); color: var(--ink); }
+  .formula { background: #fff; border: var(--bd); border-radius: 12px; box-shadow: var(--sh-sm); }
+  .credit { background: var(--sky); border: var(--bd); box-shadow: var(--sh-sm); color: var(--ink); }
+  .credit b { color: var(--ink); }
+  .credit a, .store-src a, .ref a, .cite a { text-decoration-color: var(--ink); text-decoration-thickness: 1.5px; }
+  .toast { border: 2px solid var(--ink); box-shadow: var(--sh-sm); }
+  .btn.secondary { border: var(--bd); box-shadow: var(--sh-sm); }
+  .inline-num input, input.inline-num, .inline-num { border: var(--bd); border-radius: 10px; background: #fff; font-weight: 800; }
+  @media (prefers-reduced-motion: reduce) { .btn, .stores button { transition: none; } }
 </style>
 </head>
 <body>
@@ -268,7 +360,7 @@
     <div class="stores" data-stores="harga"></div>
     <div class="feeline" id="hFeeLine"></div>
 
-    <div class="label"><span class="step"><i>2</i>Biaya &amp; target untung</span> <button class="link" id="openRecipe">Hitung modal dari resep</button></div>
+    <div class="label"><span class="step s2"><i>2</i>Biaya &amp; target untung</span> <button class="link" id="openRecipe">Hitung modal dari resep</button></div>
     <div class="card">
       <div class="field"><div class="name"><b>Modal per barang</b><small>harga beli / biaya produksi</small></div><div class="money"><span>Rp</span><input id="hHpp" inputmode="numeric" value="50.000"></div></div>
       <div class="field"><div class="name"><b>Kemasan & lain-lain</b><small>per pesanan</small></div><div class="money"><span>Rp</span><input id="hPack" inputmode="numeric" value="2.000"></div></div>
